@@ -41,6 +41,10 @@ class Inpxlsx():
 
     ui.pushButton_3.clicked.connect(inp_third_file)
 
+    def process(self):
+        global final_data_1, final_data_2, final_data_3
+
+
 
 
 

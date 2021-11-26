@@ -124,7 +124,7 @@ class Ui_GRP(object):
         self.pushButton_2.setText(_translate("GRP", "Импортировать"))
         self.pushButton_3.setText(_translate("GRP", "Импортировать"))
         self.label_4.setText(_translate("GRP", "Выполнить обработку:"))
-        self.pushButton_4.setText(_translate("GRP", "Выполнить"))
+        self.pushButton_4.setText(_translate("GRP", "Выполнить!"))
         self.label_5.setText(_translate("GRP", "Экспорт файла:"))
         self.pushButton_5.setText(_translate("GRP", "Экспортировать"))
         self.label_6.setText(_translate("GRP", "Формирование вкладки ГРП из NGT Smart"))
