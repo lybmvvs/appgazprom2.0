@@ -223,6 +223,10 @@ class Inpxlsx():
             lambda x:
             0 if str(x['Тип ГТМ']) == 'ВНС'
             else x['Число стадий ГРП'], axis=1)
+        sotired_final = sotired_final.drop(sotired_final[sotired_final['Пласт'] != 'Ю1(1)'].index).reset_index(drop=True)
+        zzz = sotired_final['Длиина ГС, м'].tolist()
+        sotired_final['Длина ГС, м'] = zzz
+        sotired_final = sotired_final.drop(['Длиина ГС, м'], axis=1)
         ui.lineEdit_4.setText('Успешно!')
 
     ui.pushButton_4.clicked.connect(process)
