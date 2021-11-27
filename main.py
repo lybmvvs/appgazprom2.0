@@ -223,10 +223,16 @@ class Inpxlsx():
             lambda x:
             0 if str(x['Тип ГТМ']) == 'ВНС'
             else x['Число стадий ГРП'], axis=1)
-        sotired_final = sotired_final.drop(sotired_final[sotired_final['Пласт'] != 'Ю1(1)'].index).reset_index(drop=True)
+        n = 1
+        z = sotired_final['Пласт'].value_counts()[:n].index.tolist()
+        plast = str(z[0])
+        sotired_final = sotired_final.drop(sotired_final[sotired_final['Пласт'] != plast].index).reset_index(drop=True)
         zzz = sotired_final['Длиина ГС, м'].tolist()
         sotired_final['Длина ГС, м'] = zzz
         sotired_final = sotired_final.drop(['Длиина ГС, м'], axis=1)
+        sotired_final = sotired4.reindex(
+            columns=['Скважина №', 'Длина ГС, м', 'Число стадий ГРП', 'Полудлина трещины, м', 'Ширина трещины, мм',
+                     'Проницаемость проппанта, Д', 'Дата ВНР после ГС \ ГРП \ЗБГС', 'ГС/ННС', 'Тип ГТМ', 'Пласт'])
         ui.lineEdit_4.setText('Успешно!')
 
     ui.pushButton_4.clicked.connect(process)
