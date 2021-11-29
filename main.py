@@ -229,10 +229,16 @@ class Inpxlsx():
         sotired_final = sotired_final.drop(sotired_final[sotired_final['Пласт'] != plast].index).reset_index(drop=True)
         zzz = sotired_final['Длиина ГС, м'].tolist()
         sotired_final['Длина ГС, м'] = zzz
+
         sotired_final = sotired_final.drop(['Длиина ГС, м'], axis=1)
-        sotired_final = sotired4.reindex(
+        sotired_final = sotired_final.reindex(
             columns=['Скважина №', 'Длина ГС, м', 'Число стадий ГРП', 'Полудлина трещины, м', 'Ширина трещины, мм',
                      'Проницаемость проппанта, Д', 'Дата ВНР после ГС \ ГРП \ЗБГС', 'ГС/ННС', 'Тип ГТМ', 'Пласт'])
+        #sotired_final1 = sotired4.reindex(
+        #    columns=['Скважина №', 'Длина ГС, м', 'Число стадий ГРП', 'Полудлина трещины, м', 'Ширина трещины, мм',
+        #             'Проницаемость проппанта, Д', 'Дата ВНР после ГС \ ГРП \ЗБГС', 'ГС/ННС', 'Тип ГТМ', 'Пласт'])
+        #sotired_final.columns = ['Скважина №', 'Длина ГС, м', 'Число стадий ГРП', 'Полудлина трещины, м', 'Ширина трещины, мм',
+        #            'Проницаемость проппанта, Д', 'Дата ВНР после ГС \ ГРП \ЗБГС', 'ГС/ННС', 'Тип ГТМ', 'Пласт']
         ui.lineEdit_4.setText('Успешно!')
 
     ui.pushButton_4.clicked.connect(process)
