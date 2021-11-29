@@ -1,4 +1,5 @@
 import sys
+import copy
 import pandas as pd
 import statistics
 from PyQt5 import QtWidgets
@@ -41,31 +42,37 @@ class Inpxlsx():
 
     def process(self):
         global coordinates, grp, grp_1,sotired_final
+        # вычисление длины ствола гс скважины
         coordinates['Length'] = coordinates.apply(
             lambda x: ((x['Координата забоя Х (по траектории)'] - x['Координата X']) ** (2) +
                        (x['Координата забоя Y (по траектории)'] - x['Координата Y']) ** (2)) ** (0.5)
             , axis=1)
+        coordinates['№ скважины'] = coordinates.apply(
+            lambda x:
+            str(x['№ скважины']), axis=1)
         grp.reset_index(drop=True)
         grp.reset_index(inplace=True)
         grp = grp.drop(['Unnamed: 0', 'Подрядчик', 'Комментарии', 'Страница', 'Unnamed: 6', 'Азимут'], axis=1)
         grp = grp.drop(
             ['V гель', 'V без под', 'V под', 'М бр', 'Гель', 'Конц', 'Расход', 'Эфф', 'Рпл Хорнер', 'Проппант', 'k',
-             'Ноб', 'Нэф', 'Pпл', 'Верх', 'Низ'], axis=1)
+             'Ноб', 'Нэф', 'Рпл', 'Верх', 'Низ'], axis=1)
         grp = grp.drop(['Xf', 'Hf', 'Wf', 'PIdsg', 'Скин-фактор', 'JD', 'FCD', 'М пр', 'Покр', 'План'], axis=1)
+        grp['Номер скважины'] = grp.apply(
+            lambda x:
+            str(x['Номер скважины']), axis=1)
         # координаты скважин для нашего объекта
         my_wells = grp['Номер скважины'].tolist()
         my_wells_no_repeat = []
         for x in my_wells:
             if x not in my_wells_no_repeat:
                 my_wells_no_repeat.append(x)
-        coordinates = coordinates[coordinates['№ скважины'].isin(my_wells_no_repeat)].reset_index(drop=True)
+        coordinates = coordinates[
+            coordinates['№ скважины'].isin(my_wells_no_repeat)].reset_index(drop=True)
         coordinates = coordinates.drop(['Координата X', 'Координата Y', 'Координата забоя Х (по траектории)',
                                         'Координата забоя Y (по траектории)'], axis=1)
         new = coordinates['№ скважины'].tolist()
         coordinates['Номер скважины'] = new
         coordinates = coordinates.drop(['№ скважины'], axis=1)
-        # понимаем какие скважины горизонтальные по углу наклона
-
         final = grp.merge(coordinates, on='Номер скважины')
         final['Длиина ГС, м'] = final.apply(
             lambda x:
@@ -78,6 +85,9 @@ class Inpxlsx():
         )
         grp_1.reset_index(drop=True)
         grp_1.reset_index(inplace=True)
+        grp_1['Скважина'] = grp_1.apply(
+            lambda x:
+            str(x['Скважина']), axis=1)
         grp_1 = grp_1[grp_1['Скважина'].isin(my_wells_no_repeat)].reset_index(drop=True)
         grp_1 = grp_1.drop(['С начала мероприятия', 'С начала года', 'За текущий месяц', 'P нас', 'В-ть жидк.', 'Коб'],
                            axis=1)
@@ -91,7 +101,9 @@ class Inpxlsx():
                            axis=1)
         grp_1 = grp_1.drop(['Интервалы перф.', 'Hвд', 'Состояние', 'Pзаб', 'Pпл', 'H дин', 'Lхода', 'Напор'], axis=1)
         grp_1 = grp_1.drop(['Месторождение', 'Unnamed: 0', 'Куст', 'Част', 'Кач', 'Hспуск', 'Qн', 'Qж', '%'], axis=1)
+        grp_1 = grp_1[grp_1['Скважина'].isin(my_wells_no_repeat)].reset_index(drop=True)
         # даты введения ГРП и ВНС на скважинах очень важно!!!!!!!
+        grp_3 = copy.deepcopy(grp_1)
         grp_3 = grp_1
         grp_3['Дата ВНР после ГС \\ ГРП \\ЗБГС'] = grp_3.apply(
             lambda x:
@@ -113,18 +125,21 @@ class Inpxlsx():
 
         grp_3['Номер скважины'] = vvv
         grp_3 = grp_3.drop(['Скважина'], axis=1)
-        # число стадий ГРП по гтм
-        grp_2 = grp_1
+        grp_2 = copy.deepcopy(grp_1)
         grp_2['ГРП'] = grp_2.apply(
             lambda x:
             'грп' if 'КР7-2' in str(x['Краткое описание мероприятий'])
+            else 'вдс' if 'Ввод добывающих сква' in str(x['Краткое описание мероприятий'])
             else 'нет', axis=1)
-        grp_2 = grp_2.drop(grp_2[grp_2['ГРП'] != 'грп'].index)
+        grp_2 = grp_2.drop(grp_2[grp_2['ГРП'] == 'нет'].index)
         grp_2 = grp_2.groupby('Скважина').agg(
             {'ГРП': lambda x:
             x.tolist()}
         )
         grp_2.reset_index(inplace=True)
+        for i in grp_2['ГРП']:
+            if 'вдс' in i:
+                i.remove('вдс')
         new_1 = grp_2['Скважина'].tolist()
         grp_2['Номер скважины'] = new_1
         grp_2 = grp_2.drop(['Скважина'], axis=1)
@@ -234,6 +249,8 @@ class Inpxlsx():
         sotired_final = sotired_final.reindex(
             columns=['Скважина №', 'Длина ГС, м', 'Число стадий ГРП', 'Полудлина трещины, м', 'Ширина трещины, мм',
                      'Проницаемость проппанта, Д', 'Дата ВНР после ГС \ ГРП \ЗБГС', 'ГС/ННС', 'Тип ГТМ', 'Пласт'])
+
+
         #sotired_final1 = sotired4.reindex(
         #    columns=['Скважина №', 'Длина ГС, м', 'Число стадий ГРП', 'Полудлина трещины, м', 'Ширина трещины, мм',
         #             'Проницаемость проппанта, Д', 'Дата ВНР после ГС \ ГРП \ЗБГС', 'ГС/ННС', 'Тип ГТМ', 'Пласт'])
