@@ -249,6 +249,25 @@ class Inpxlsx():
         sotired_final = sotired_final.reindex(
             columns=['Скважина №', 'Длина ГС, м', 'Число стадий ГРП', 'Полудлина трещины, м', 'Ширина трещины, мм',
                      'Проницаемость проппанта, Д', 'Дата ВНР после ГС \ ГРП \ЗБГС', 'ГС/ННС', 'Тип ГТМ', 'Пласт'])
+        # ставим нули для ВНС
+        sotired_final_VNS = sotired_final.groupby('Скважина №').agg(
+            {'Тип ГТМ': lambda x:
+            x.tolist()}
+        )
+        sotired_final_VNS['тип'] = sotired_final_VNS.apply(
+            lambda x: ''.join(x['Тип ГТМ'])
+            , axis=1)
+        sotired_final_VNS = sotired_final_VNS.drop(sotired_final_VNS[sotired_final_VNS['тип'] != 'ВНС'].index)
+        sotired_final_VNS['Скважина №'] = sotired_final_VNS.index
+        vns_only = sotired_final_VNS['Скважина №'].tolist()
+        sotired_final_to_red = sotired_final[
+            sotired_final['Скважина №'].isin(vns_only)].reset_index(drop=True)
+        sotired_final_to_red['Полудлина трещины, м'] = 0
+        sotired_final_to_red['Ширина трещины, мм'] = 0
+        sotired_final_to_red['Проницаемость проппанта, Д'] = 0
+        sotired_final = sotired_final[~sotired_final['Скважина №'].isin(vns_only)].reset_index(drop=True)
+        sotired_final = pd.concat([sotired_final, sotired_final_to_red])
+        sotired_final = sotired_final.reset_index(drop=True)
 
 
         #sotired_final1 = sotired4.reindex(
