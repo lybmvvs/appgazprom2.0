@@ -25,10 +25,10 @@ class Inpxlsx():
     ui.pushButton.clicked.connect(inp_first_file)
 
     def inp_second_file(self):
-        global grp_1
+        global grp_gtm
         name2 = ui.lineEdit_2.text()
-        grp_1 = pd.read_excel(name2,header=[1], index_col=[1])
-        print(name2,grp_1.shape)
+        grp_gtm = pd.read_excel(name2,header=[1], index_col=[1])
+        print(name2,grp_gtm.shape)
 
     ui.pushButton_2.clicked.connect(inp_second_file)
 
@@ -41,7 +41,7 @@ class Inpxlsx():
     ui.pushButton_3.clicked.connect(inp_third_file)
 
     def process(self):
-        global coordinates, grp, grp_1,sotired_final
+        global coordinates, grp, grp_gtm,sotired_final
         # вычисление длины ствола гс скважины
         coordinates['Length'] = coordinates.apply(
             lambda x: ((x['Координата забоя Х (по траектории)'] - x['Координата X']) ** (2) +
@@ -83,6 +83,7 @@ class Inpxlsx():
             {'Дата': lambda x:
             x.tolist()}
         )
+        grp_1 = copy.deepcopy(grp_gtm)
         grp_1.reset_index(drop=True)
         grp_1.reset_index(inplace=True)
         grp_1['Скважина'] = grp_1.apply(
@@ -268,6 +269,48 @@ class Inpxlsx():
         sotired_final = sotired_final[~sotired_final['Скважина №'].isin(vns_only)].reset_index(drop=True)
         sotired_final = pd.concat([sotired_final, sotired_final_to_red])
         sotired_final = sotired_final.reset_index(drop=True)
+        # проверяем ЗБС
+        grp_4 = copy.deepcopy(grp_gtm)
+        grp_4.reset_index(drop=True)
+        grp_4.reset_index(inplace=True)
+        grp_4['Скважина'] = grp_4.apply(
+            lambda x:
+            str(x['Скважина']), axis=1)
+        grp_4 = grp_4[grp_4['Скважина'].isin(my_wells_no_repeat)].reset_index(drop=True)
+        grp_zbs = grp_4.loc[grp_4['Тип'] == 'ЗБС в аварийных скв.']
+        grp_zbs = grp_zbs.groupby('Скважина').agg(
+            {'Начало.1': lambda x:
+            x}
+        )
+        grp_zbs.reset_index(drop=True)
+        grp_zbs.reset_index(inplace=True)
+        vv = grp_zbs['Скважина'].tolist()
+
+        grp_zbs['Скважина №'] = vv
+        grp_zbs = grp_zbs.drop(['Скважина'], axis=1)
+        sotired_final_zbs = sotired_final.merge(grp_zbs, on='Скважина №')
+        abba = sotired_final_zbs['Скважина №'].tolist()
+        sotired_final_zbs['Длина ГС, м'] = sotired_final_zbs.apply(
+            lambda x:
+            0 if x['Дата ВНР после ГС \ ГРП \ЗБГС'] < x['Начало.1'] else x['Длина ГС, м'],
+            axis=1
+        )
+        sotired_final_zbs['Число стадий ГРП'] = sotired_final_zbs.apply(
+            lambda x:
+            1 if x['Дата ВНР после ГС \ ГРП \ЗБГС'] < x['Начало.1'] else x['Число стадий ГРП'],
+            axis=1
+        )
+        sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
+            lambda x:
+            str(x['Скважина №'])
+            + ('_Л' if x['Длина ГС, м'] == 0 else ''),
+            axis=1
+        )
+        sotired_final_zbs = sotired_final_zbs.drop(['Начало.1'], axis=1)
+        sotired_final = sotired_final[~sotired_final['Скважина №'].isin(abba)].reset_index(drop=True)
+        sotired_final = pd.concat([sotired_final, sotired_final_zbs])
+
+
 
 
         #sotired_final1 = sotired4.reindex(
