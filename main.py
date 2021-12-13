@@ -2,8 +2,10 @@ import sys
 import copy
 import pandas as pd
 import statistics
+import datetime
 from PyQt5 import QtWidgets
 from forming_GRP import Ui_GRP
+
 
 
 
@@ -17,10 +19,10 @@ GRP.show()
 class Inpxlsx():
 
     def inp_first_file(self):
-        global grp
+        global grp_dad
         name1 = ui.lineEdit.text()
-        grp = pd.read_excel(name1,header=[1], index_col=[1])
-        print(name1,grp.shape)
+        grp_dad = pd.read_excel(name1,header=[1], index_col=[1])
+        print(name1,grp_dad.shape)
 
     ui.pushButton.clicked.connect(inp_first_file)
 
@@ -41,7 +43,7 @@ class Inpxlsx():
     ui.pushButton_3.clicked.connect(inp_third_file)
 
     def process(self):
-        global coordinates, grp, grp_gtm,sotired_final
+        global coordinates, grp_dad, grp_gtm,sotired_final
         # вычисление длины ствола гс скважины
         coordinates['Length'] = coordinates.apply(
             lambda x: ((x['Координата забоя Х (по траектории)'] - x['Координата X']) ** (2) +
@@ -50,6 +52,7 @@ class Inpxlsx():
         coordinates['№ скважины'] = coordinates.apply(
             lambda x:
             str(x['№ скважины']), axis=1)
+        grp = copy.deepcopy(grp_dad)
         grp.reset_index(drop=True)
         grp.reset_index(inplace=True)
         #grp = grp.drop(['Unnamed: 0', 'Подрядчик', 'Комментарии', 'Страница', 'Unnamed: 6', 'Азимут'], axis=1)
@@ -105,7 +108,6 @@ class Inpxlsx():
         #grp_1 = grp_1[grp_1['Скважина'].isin(my_wells_no_repeat)].reset_index(drop=True)
         # даты введения ГРП и ВНС на скважинах очень важно!!!!!!!
         grp_3 = copy.deepcopy(grp_1)
-        grp_3 = grp_1
         grp_3['Дата ВНР после ГС \\ ГРП \\ЗБГС'] = grp_3.apply(
             lambda x:
             x['Начало.1'] if 'КР7-2' in str(x['Краткое описание мероприятий'])
@@ -116,7 +118,7 @@ class Inpxlsx():
             'ГРП' if 'КР7-2' in str(x['Краткое описание мероприятий'])
             else 'ВНС' if 'Ввод добывающих сква' in str(x['Краткое описание мероприятий'])
             else 'нет', axis=1)
-        grp_3 = grp_3.drop(grp_1[grp_1['Дата ВНР после ГС \\ ГРП \\ЗБГС'] == 'нет'].index)
+        grp_3 = grp_3.drop(grp_3[grp_3['Дата ВНР после ГС \\ ГРП \\ЗБГС'] == 'нет'].index)
         grp_3 = grp_3.groupby(by=['Скважина', 'Дата ВНР после ГС \ ГРП \ЗБГС']).agg(
             {'Тип ГТМ': lambda x:
             x.tolist()[0]}
@@ -250,25 +252,57 @@ class Inpxlsx():
         sotired_final = sotired_final.reindex(
             columns=['Скважина №', 'Длина ГС, м', 'Число стадий ГРП', 'Полудлина трещины, м', 'Ширина трещины, мм',
                      'Проницаемость проппанта, Д', 'Дата ВНР после ГС \ ГРП \ЗБГС', 'ГС/ННС', 'Тип ГТМ', 'Пласт'])
-        # ставим нули для ВНС
-        sotired_final_VNS = sotired_final.groupby('Скважина №').agg(
-            {'Тип ГТМ': lambda x:
+        #корректное число стадий для грп разных периодов из ФРАКЛИСТА
+        sotired_final['Дата ВНР после ГС \ ГРП \ЗБГС'] = sotired_final.apply(
+            lambda x:
+            str(x['Дата ВНР после ГС \ ГРП \ЗБГС']), axis=1)
+        sotired_final['месяц с грп'] = sotired_final.apply(
+            lambda x:
+            x['Дата ВНР после ГС \ ГРП \ЗБГС'][:7],
+            axis=1
+        )
+        grp_number = copy.deepcopy(grp_dad)
+        grp_number.reset_index(drop=True)
+        grp_number.reset_index(inplace=True)
+
+        # grp=grp.drop(['Unnamed: 0','Подрядчик','Комментарии','Страница','Unnamed: 6','Азимут'],axis=1)
+        # grp=grp.drop(['V гель','V без под','V под','М бр','Гель','Конц','Расход','Эфф','Рпл Хорнер','Проппант','k','Ноб','Нэф','Верх','Низ'],axis=1)
+        # grp=grp.drop(['Xf','Hf','Wf','PIdsg','Скин-фактор','JD','FCD','М пр','Покр','План'],axis=1)
+        grp_number['Номер скважины'] = grp_number.apply(
+            lambda x:
+            str(x['Номер скважины']), axis=1)
+        grp_number['Дата'] = grp_number.apply(
+            lambda x:
+            str(x['Дата']), axis=1)
+        grp_number['месяц с грп'] = grp_number.apply(
+            lambda x:
+            x['Дата'][:7],
+            axis=1
+        )
+        grp_number_group = grp_number.groupby(by=['Номер скважины', 'месяц с грп']).agg(
+            {'Наклон': lambda x:
             x.tolist()}
         )
-        sotired_final_VNS['тип'] = sotired_final_VNS.apply(
-            lambda x: ''.join(x['Тип ГТМ'])
-            , axis=1)
-        sotired_final_VNS = sotired_final_VNS.drop(sotired_final_VNS[sotired_final_VNS['тип'] != 'ВНС'].index)
-        sotired_final_VNS['Скважина №'] = sotired_final_VNS.index
-        vns_only = sotired_final_VNS['Скважина №'].tolist()
-        sotired_final_to_red = sotired_final[
-            sotired_final['Скважина №'].isin(vns_only)].reset_index(drop=True)
-        sotired_final_to_red['Полудлина трещины, м'] = 0
-        sotired_final_to_red['Ширина трещины, мм'] = 0
-        sotired_final_to_red['Проницаемость проппанта, Д'] = 0
-        sotired_final = sotired_final[~sotired_final['Скважина №'].isin(vns_only)].reset_index(drop=True)
-        sotired_final = pd.concat([sotired_final, sotired_final_to_red])
-        sotired_final = sotired_final.reset_index(drop=True)
+        grp_number_group.reset_index(inplace=True)
+        grp_number_group['число стадий'] = grp_number_group.apply(
+            lambda x:
+            len(x['Наклон']), axis=1)
+        grp_number_group = grp_number_group.drop('Наклон', axis=1)
+        blabla = grp_number_group['Номер скважины'].tolist()
+
+        grp_number_group['Скважина №'] = blabla
+        grp_number_group = grp_number_group.drop(['Номер скважины'], axis=1)
+        sotired_final = sotired_final.merge(grp_number_group, on=['месяц с грп', 'Скважина №'])
+        milan = sotired_final['число стадий'].tolist()
+        sotired_final = sotired_final.drop(['Число стадий ГРП'], axis=1)
+        sotired_final['Число стадий ГРП'] = milan
+        sotired_final = sotired_final.drop(['число стадий'], axis=1)
+        sotired_final['Дата ВНР после ГС \ ГРП \ЗБГС']=pd.to_datetime(sotired_final['Дата ВНР после ГС \ ГРП \ЗБГС'])
+        sotired_final = sotired_final.reindex(
+            columns=['Скважина №', 'Длина ГС, м', 'Число стадий ГРП', 'Полудлина трещины, м', 'Ширина трещины, мм',
+                     'Проницаемость проппанта, Д', 'Дата ВНР после ГС \ ГРП \ЗБГС', 'ГС/ННС', 'Тип ГТМ', 'Пласт',
+                     'месяц с грп'])
+
         # проверяем ЗБС
         grp_4 = copy.deepcopy(grp_gtm)
         grp_4.reset_index(drop=True)
@@ -303,12 +337,125 @@ class Inpxlsx():
         sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
             lambda x:
             str(x['Скважина №'])
-            + ('_Л' if x['Длина ГС, м'] == 0 else ''),
+            + ('Л' if x['Длина ГС, м'] == 0 else ''),
             axis=1
         )
         sotired_final_zbs = sotired_final_zbs.drop(['Начало.1'], axis=1)
         sotired_final = sotired_final[~sotired_final['Скважина №'].isin(abba)].reset_index(drop=True)
         sotired_final = pd.concat([sotired_final, sotired_final_zbs])
+        sotired_final.reset_index(drop=True)
+        sotired_final.reset_index(inplace=True)
+        # ставим нули для ВНС
+        sotired_final['Полудлина трещины, м'] = sotired_final.apply(
+            lambda x:
+            0 if 'ВНС' in str(x['Тип ГТМ'])
+            else x['Полудлина трещины, м']
+            , axis=1)
+        sotired_final['Ширина трещины, мм'] = sotired_final.apply(
+            lambda x:
+            0 if 'ВНС' in str(x['Тип ГТМ'])
+            else x['Ширина трещины, мм']
+            , axis=1)
+        sotired_final['Проницаемость проппанта, Д'] = sotired_final.apply(
+            lambda x:
+            0 if 'ВНС' in str(x['Тип ГТМ'])
+            else x['Проницаемость проппанта, Д']
+            , axis=1)
+        # ДОБАВИТЬ В ВНС
+        sotired_final['Число стадий ГРП'] = sotired_final.apply(
+            lambda x:
+            0 if 'ВНС' in str(x['Тип ГТМ'])
+            else x['Число стадий ГРП']
+            , axis=1)
+        #приставка ФРАК там где надо
+        step = sotired_final.drop(
+            sotired_final[(sotired_final['ГС/ННС'] == 'ГС') | (sotired_final['ГС/ННС'] == 'ННС')].index)
+        step = step.groupby(by=['Скважина №']).agg(
+            {'index': lambda x:
+            x.tolist()[1:]}
+        )
+        step.rename(columns={'Скважина №': 'список'}, inplace=True)
+        step.reset_index(inplace=True)
+        step['Length'] = step.apply(
+            lambda x: len(x['index'])
+            , axis=1)
+        step = step.drop(step[step['Length'] < 1].index)
+        gang1 = []
+        gang2 = []
+        gang3 = []
+        gang4 = []
+        gang5 = []
+        gang6 = []
+        gang7 = []
+        gang8 = []
+        gang9 = []
+        gang10 = []
+
+        for i in step['index']:
+            if len(i) >= 1:
+                gang1.append(i[0])
+            if len(i) >= 2:
+                gang2.append(i[1])
+            if len(i) >= 3:
+                gang3.append(i[2])
+            if len(i) >= 4:
+                gang4.append(i[3])
+            if len(i) >= 5:
+                gang5.append(i[4])
+            if len(i) >= 6:
+                gang6.append(i[5])
+            if len(i) >= 7:
+                gang7.append(i[6])
+            if len(i) >= 8:
+                gang8.append(i[7])
+            if len(i) >= 9:
+                gang9.append(i[8])
+            if len(i) >= 10:
+                gang10.append(i[9])
+            else:
+                pass
+        sotired_final['Скважина №'] = sotired_final.apply(
+            lambda x:
+            x['Скважина №'] + '_ФРАК' if x['index'] in gang1
+            else x['Скважина №'], axis=1)
+        sotired_final['Скважина №'] = sotired_final.apply(
+            lambda x:
+            x['Скважина №'] + '_ФРАК_1' if x['index'] in gang2
+            else x['Скважина №'], axis=1)
+        sotired_final['Скважина №'] = sotired_final.apply(
+            lambda x:
+            x['Скважина №'] + '_ФРАК_2' if x['index'] in gang3
+            else x['Скважина №'], axis=1)
+        sotired_final['Скважина №'] = sotired_final.apply(
+            lambda x:
+            x['Скважина №'] + '_ФРАК_3' if x['index'] in gang4
+            else x['Скважина №'], axis=1)
+        sotired_final['Скважина №'] = sotired_final.apply(
+            lambda x:
+            x['Скважина №'] + '_ФРАК_4' if x['index'] in gang5
+            else x['Скважина №'], axis=1)
+        sotired_final['Скважина №'] = sotired_final.apply(
+            lambda x:
+            x['Скважина №'] + '_ФРАК_5' if x['index'] in gang6
+            else x['Скважина №'], axis=1)
+        sotired_final['Скважина №'] = sotired_final.apply(
+            lambda x:
+            x['Скважина №'] + '_ФРАК_6' if x['index'] in gang7
+            else x['Скважина №'], axis=1)
+        sotired_final['Скважина №'] = sotired_final.apply(
+            lambda x:
+            x['Скважина №'] + '_ФРАК_7' if x['index'] in gang8
+            else x['Скважина №'], axis=1)
+        sotired_final['Скважина №'] = sotired_final.apply(
+            lambda x:
+            x['Скважина №'] + '_ФРАК_8' if x['index'] in gang9
+            else x['Скважина №'], axis=1)
+        sotired_final['Скважина №'] = sotired_final.apply(
+            lambda x:
+            x['Скважина №'] + '_ФРАК_9' if x['index'] in gang10
+            else x['Скважина №'], axis=1)
+        sotired_final = sotired_final.drop(['index'], axis=1)
+        sotired_final = sotired_final.drop(['месяц с грп'], axis=1)
 
 
 
@@ -325,7 +472,7 @@ class Inpxlsx():
     def exp_file(self):
         global sotired_final
 
-        sotired_final.to_excel('GRP_new.xlsx',index=False)
+        sotired_final.to_excel('GRP_new.xlsx')
 
     ui.pushButton_5.clicked.connect(exp_file)
 
