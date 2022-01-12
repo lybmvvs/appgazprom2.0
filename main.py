@@ -4,7 +4,7 @@ import pandas as pd
 import statistics
 import datetime
 from PyQt5 import QtWidgets
-from forming_GRP import Ui_GRP
+from forming_GRP_new import Ui_GRP
 
 
 
@@ -46,9 +46,8 @@ class Inpxlsx():
         global coordinates, grp_dad, grp_gtm,sotired_final
         grp_dad.reset_index(drop=True)
         grp_dad.reset_index(inplace=True)
-        nnn = 1
-        zzz = grp_dad['Пласт'].value_counts()[:nnn].index.tolist()
-        plasttt = str(zzz[0])
+        #берем имя пласта из ячейки с текстом
+        plasttt = ui.lineEdit_5.text()
         grp_dad['удалю'] = grp_dad.apply(
             lambda x:
             'нет' if plasttt in str(x['Пласт'])
@@ -58,9 +57,8 @@ class Inpxlsx():
         grp_gtm.reset_index(drop=True)
         grp_gtm.reset_index(inplace=True)
         grp_gtm = grp_gtm[grp_gtm['Объект разработки до ГТМ'].notna()]
-        nn = 1
-        zz = grp_gtm['Объект разработки до ГТМ'].value_counts()[:nn].index.tolist()
-        plastt = str(zz[0])
+        #берем имя пласта из той же ячейки
+        plastt = ui.lineEdit_5.text()
         grp_gtm = grp_gtm.drop(grp_gtm[grp_gtm['Объект разработки до ГТМ'] != plastt].index).reset_index(drop=True)
         coordinates['Length'] = coordinates.apply(
             lambda x: ((x['Координата забоя Х (по траектории)'] - x['Координата X']) ** (2) +
@@ -417,9 +415,10 @@ class Inpxlsx():
             lambda x:
             0 if str(x['Тип ГТМ']) == 'ВНС'
             else x['Число стадий ГРП'], axis=1)
-        n = 1
-        z = sotired_final['Пласт'].value_counts()[:n].index.tolist()
-        plast = str(z[0])
+        #n = 1
+        #z = sotired_final['Пласт'].value_counts()[:n].index.tolist()
+        #plast = str(z[0])
+        plast = ui.lineEdit_5.text()
         sotired_final = sotired_final.drop(sotired_final[sotired_final['Пласт'] != plast].index).reset_index(drop=True)
         zzz = sotired_final['Длиина ГС, м'].tolist()
         sotired_final['Длина ГС, м'] = zzz
