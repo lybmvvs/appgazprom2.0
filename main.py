@@ -192,7 +192,20 @@ class Inpxlsx():
             x.tolist()[0]}
         )
         grp_gang.reset_index(inplace=True)
-
+        # GOOOOOOOOOOOOO
+        grp_gang['index'] = grp_gang.index
+        grp_vnski_double = grp_gang.drop(grp_gang[grp_gang['Тип ГТМ'] != 'ВНС'].index)
+        grp_vnski_double['index'] = grp_vnski_double.index
+        grp_vnski_double = grp_vnski_double.groupby('Скважина').agg(
+            {'index': lambda x:
+            x.tolist()[1:]}
+        )
+        sveta = []
+        for i in grp_vnski_double['index']:
+            sveta += i
+        grp_gang = grp_gang[~grp_gang['index'].isin(sveta)].reset_index(drop=True)
+        grp_gang = grp_gang.drop(['index'], axis=1)
+        # GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
         vvvvv = grp_gang['Скважина'].tolist()
 
         grp_gang['Номер скважины'] = vvvvv
@@ -293,6 +306,21 @@ class Inpxlsx():
 
         grp_3['Номер скважины'] = vvv
         grp_3 = grp_3.drop(['Скважина'], axis=1)
+
+        # GGGOOOOOOOOOOOOOOOOO
+        grp_3['index'] = grp_3.index
+        grp_vnski_d = grp_3.drop(grp_3[grp_3['Тип ГТМ'] != 'ВНС'].index)
+        grp_vnski_d['index'] = grp_vnski_d.index
+        grp_vnski_d = grp_vnski_d.groupby('Номер скважины').agg(
+            {'index': lambda x:
+            x.tolist()[1:]}
+        )
+        svetka = []
+        for i in grp_vnski_d['index']:
+            svetka += i
+        grp_3 = grp_3[~grp_3['index'].isin(svetka)].reset_index(drop=True)
+        grp_3 = grp_3.drop(['index'], axis=1)
+        # GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
         grp_2 = copy.deepcopy(grp_1)
         grp_2['ГРП'] = grp_2.apply(
             lambda x:
