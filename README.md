@@ -8,6 +8,8 @@ where the **.exe** file locates. You need all three files exported from NGT Smar
 with fraklist, file with GTM and file with well coordinates.
 * Secondly print the **name** of each **.xlsx** file in input 
 fields like *фраклист.xlsx* according to labels above. Press all the **Импортировать** buttons.
+* In the bottom of the window you can find an empty input field where you can print the name of a layer you need to process.
+There is a word *Пласт* near there.
 * Press buttons only **once**!
 * Press the **Выполнить!** button. You will get the **Успешно** inscription if processing was correct.
 * Lastly you can press the *Экспортировать* button and get a new **.xlsx** file called *GRP_new.xlsx*!
@@ -22,6 +24,8 @@ fields like *фраклист.xlsx* according to labels above. Press all the **�
 приложения NGT Smart: файл с фраклистом, файл с ГТМ и файл с координатами скважин.
 * Далее: ввести в поля для ввода текста названия своих файла в виде
 *фраклист.xlsx* в соответствии с подписями выше полей.
+* Внизу стрнаницы в пустом поле можно ввести название пласта, который вы хотите обработать. Пустое поле находится
+рядом с надписью *Пласт* соответственно.
 * Нажимайте кнопки только **один раз!**
 * Нажмите на кнопку **Выполнить!**. На экран выведется надпись **Успешно**, если обработка данных завершилась успешно.
 
