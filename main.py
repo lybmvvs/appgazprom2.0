@@ -562,12 +562,22 @@ class Inpxlsx():
             all_wells += i
         for i in dele['level_0']:
             to_stay.append(i[-1])
+        # замена
+        alli = copy.deepcopy(sotired_final)
+        alli = alli[alli['level_0'].isin(all_wells)].reset_index(drop=True)
+        alli = alli.drop(alli[alli['Тип ГТМ'] == 'ВНС'].index).reset_index(drop=True)
+        alli = alli.groupby('Скважина №').agg(
+            {'level_0': lambda x:
+            x.tolist()[0]}
+        )
+        definetely_stay = alli['level_0'].tolist()
         array_3 = list(all_wells)
-        for x in to_stay:
+        for x in definetely_stay:
             try:
                 array_3.remove(x)
             except ValueError:
                 pass
+        # вот досюда
         sotired_final = sotired_final[~sotired_final['level_0'].isin(array_3)].reset_index(drop=True)
         sotired_final = sotired_final.drop(['level_0'], axis=1)
         # проверяем ЗБС
