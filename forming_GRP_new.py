@@ -31,15 +31,6 @@ class Ui_GRP(object):
 "QPushButton:pressed{\n"
 "background-color:rgb(96, 255, 39);\n"
 "}\n"
-"QLabel{\n"
-"\n"
-"width:100px;\n"
-"length:200px;\n"
-"font-size: 14px;\n"
-"font-weight:bold;\n"
-"border:none;\n"
-"text-align:center;\n"
-"}\n"
 "\n"
 "QTextEdit{\n"
 "width:100px;\n"
@@ -57,10 +48,30 @@ class Ui_GRP(object):
         self.lineEdit_3.setObjectName("lineEdit_3")
         self.gridLayout.addWidget(self.lineEdit_3, 1, 2, 1, 1)
         self.label_2 = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label_2.setStyleSheet("QLabel{\n"
+"\n"
+"width:100px;\n"
+"length:200px;\n"
+"font-size: 14px;\n"
+"font-weight:bold;\n"
+"border:none;\n"
+"text-align:center;\n"
+"\n"
+"}")
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setObjectName("label_2")
         self.gridLayout.addWidget(self.label_2, 0, 1, 1, 1)
         self.label_3 = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label_3.setStyleSheet("QLabel{\n"
+"\n"
+"width:100px;\n"
+"length:200px;\n"
+"font-size: 14px;\n"
+"font-weight:bold;\n"
+"border:none;\n"
+"text-align:center;\n"
+"\n"
+"}")
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setObjectName("label_3")
         self.gridLayout.addWidget(self.label_3, 0, 2, 1, 1)
@@ -71,6 +82,16 @@ class Ui_GRP(object):
         self.lineEdit_2.setObjectName("lineEdit_2")
         self.gridLayout.addWidget(self.lineEdit_2, 1, 1, 1, 1)
         self.label = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label.setStyleSheet("QLabel{\n"
+"\n"
+"width:100px;\n"
+"length:200px;\n"
+"font-size: 14px;\n"
+"font-weight:bold;\n"
+"border:none;\n"
+"text-align:center;\n"
+"\n"
+"}")
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
@@ -90,6 +111,16 @@ class Ui_GRP(object):
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.label_4 = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.label_4.setStyleSheet("QLabel{\n"
+"\n"
+"width:100px;\n"
+"length:200px;\n"
+"font-size: 14px;\n"
+"font-weight:bold;\n"
+"border:none;\n"
+"text-align:center;\n"
+"\n"
+"}")
         self.label_4.setAlignment(QtCore.Qt.AlignCenter)
         self.label_4.setObjectName("label_4")
         self.verticalLayout.addWidget(self.label_4)
@@ -100,6 +131,16 @@ class Ui_GRP(object):
         self.lineEdit_4.setObjectName("lineEdit_4")
         self.verticalLayout.addWidget(self.lineEdit_4)
         self.label_5 = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.label_5.setStyleSheet("QLabel{\n"
+"\n"
+"width:100px;\n"
+"length:200px;\n"
+"font-size: 14px;\n"
+"font-weight:bold;\n"
+"border:none;\n"
+"text-align:center;\n"
+"\n"
+"}")
         self.label_5.setAlignment(QtCore.Qt.AlignCenter)
         self.label_5.setObjectName("label_5")
         self.verticalLayout.addWidget(self.label_5)
@@ -108,7 +149,20 @@ class Ui_GRP(object):
         self.verticalLayout.addWidget(self.pushButton_5)
         self.label_6 = QtWidgets.QLabel(GRP)
         self.label_6.setGeometry(QtCore.QRect(100, 20, 311, 21))
-        self.label_6.setStyleSheet("background-color: rgb(121, 255, 239)")
+        self.label_6.setStyleSheet("\n"
+"QLabel{\n"
+"\n"
+"width:100px;\n"
+"length:200px;\n"
+"font-size: 14px;\n"
+"font-weight:bold;\n"
+"border:none;\n"
+"text-align:center;\n"
+"background-color: rgb(121, 255, 239)\n"
+"}\n"
+"\n"
+"\n"
+"")
         self.label_6.setObjectName("label_6")
         self.horizontalLayoutWidget = QtWidgets.QWidget(GRP)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(40, 340, 178, 80))
@@ -120,8 +174,31 @@ class Ui_GRP(object):
         self.lineEdit_5.setObjectName("lineEdit_5")
         self.horizontalLayout.addWidget(self.lineEdit_5)
         self.label_7 = QtWidgets.QLabel(self.horizontalLayoutWidget)
+        self.label_7.setStyleSheet("QLabel{\n"
+"\n"
+"width:100px;\n"
+"length:200px;\n"
+"font-size: 14px;\n"
+"font-weight:bold;\n"
+"border:none;\n"
+"text-align:center;\n"
+"\n"
+"}")
         self.label_7.setObjectName("label_7")
         self.horizontalLayout.addWidget(self.label_7)
+        self.label_8 = QtWidgets.QLabel(GRP)
+        self.label_8.setGeometry(QtCore.QRect(270, 400, 231, 31))
+        self.label_8.setStyleSheet("QLabel{\n"
+"\n"
+"width:100px;\n"
+"length:200px;\n"
+"font-size: 12px;\n"
+"font-weight:bold;\n"
+"border:none;\n"
+"text-align:center;\n"
+"color:rgb(171, 171, 171)\n"
+"}")
+        self.label_8.setObjectName("label_8")
 
         self.retranslateUi(GRP)
         QtCore.QMetaObject.connectSlotsByName(GRP)
@@ -141,3 +218,4 @@ class Ui_GRP(object):
         self.pushButton_5.setText(_translate("GRP", "Экспортировать"))
         self.label_6.setText(_translate("GRP", "Формирование вкладки ГРП из NGT Smart"))
         self.label_7.setText(_translate("GRP", "Пласт"))
+        self.label_8.setText(_translate("GRP", "Автор - разработчик: Любимов В.С."))
