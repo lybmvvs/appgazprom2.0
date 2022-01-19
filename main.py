@@ -7,8 +7,6 @@ from PyQt5 import QtWidgets
 from forming_GRP_new import Ui_GRP
 
 
-
-
 app = QtWidgets.QApplication(sys.argv)
 GRP = QtWidgets.QWidget()
 ui = Ui_GRP()
@@ -57,7 +55,7 @@ class Inpxlsx():
         grp_gtm.reset_index(drop=True)
         grp_gtm.reset_index(inplace=True)
         grp_gtm = grp_gtm[grp_gtm['Объект разработки до ГТМ'].notna()]
-        #берем имя пласта из той же ячейки
+#берем имя пласта из той же ячейки
         plastt = ui.lineEdit_5.text()
         grp_gtm = grp_gtm.drop(grp_gtm[grp_gtm['Объект разработки до ГТМ'] != plastt].index).reset_index(drop=True)
         coordinates['Length'] = coordinates.apply(
