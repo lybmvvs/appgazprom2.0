@@ -218,4 +218,4 @@ class Ui_GRP(object):
         self.pushButton_5.setText(_translate("GRP", "Экспортировать"))
         self.label_6.setText(_translate("GRP", "Формирование вкладки ГРП из NGT Smart"))
         self.label_7.setText(_translate("GRP", "Пласт"))
-        self.label_8.setText(_translate("GRP", "Автор - разработчик: Любимов В.С."))
+        self.label_8.setText(_translate("GRP", "Автор-разработчик: Любимов В.С."))
