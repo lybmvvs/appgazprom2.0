@@ -44,6 +44,14 @@ class Inpxlsx():
         global coordinates, grp_dad, grp_gtm,sotired_final
         grp_dad.reset_index(drop=True)
         grp_dad.reset_index(inplace=True)
+        #вставка 22.02.22
+        grp_dad['Номер скважины'] = grp_dad.apply(
+            lambda x:
+            str(x['Номер скважины']), axis=1)
+        grp_gtm['Скважина'] = grp_gtm.apply(
+            lambda x:
+            str(x['Скважина']), axis=1)
+        #вставка 22.02.22
         #берем имя пласта из ячейки с текстом
         plasttt = ui.lineEdit_5.text()
         grp_dad['удалю'] = grp_dad.apply(
