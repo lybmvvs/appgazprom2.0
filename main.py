@@ -613,26 +613,25 @@ class Inpxlsx():
         # sotired_final_zbs
         abba = sotired_final_zbs['Скважина №'].tolist()
         # abba
-        # if sotired_final_zbs.shape[0] != 0:
-
-        sotired_final_zbs['Длина ГС, м'] = sotired_final_zbs.apply(
+        if sotired_final_zbs.shape[0] != 0:
+            sotired_final_zbs['Длина ГС, м'] = sotired_final_zbs.apply(
             lambda x:
             0 if x['Дата ВНР после ГС \ ГРП \ЗБГС'] < x['Начало.1'] else x['Длина ГС, м'],
             axis=1
-        )
-        sotired_final_zbs['Число стадий ГРП'] = sotired_final_zbs.apply(
+            )
+            sotired_final_zbs['Число стадий ГРП'] = sotired_final_zbs.apply(
             lambda x:
             1 if x['Дата ВНР после ГС \ ГРП \ЗБГС'] < x['Начало.1'] else x['Число стадий ГРП'],
             axis=1
-        )
-        sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
+            )
+            sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
             lambda x:
             str(x['Скважина №'])
             + ('_Л' if x['Длина ГС, м'] == 0 else ''),
             axis=1
-        )
-        sotired_final_zbs = sotired_final_zbs.drop(['Начало.1'], axis=1)
-        sotired_final = sotired_final[~sotired_final['Скважина №'].isin(abba)].reset_index(drop=True)
+            )
+            sotired_final_zbs = sotired_final_zbs.drop(['Начало.1'], axis=1)
+            sotired_final = sotired_final[~sotired_final['Скважина №'].isin(abba)].reset_index(drop=True)
         sotired_final = pd.concat([sotired_final, sotired_final_zbs])
         sotired_final.reset_index(drop=True)
         sotired_final.reset_index(inplace=True)
