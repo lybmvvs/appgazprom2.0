@@ -613,6 +613,7 @@ class Inpxlsx():
         # sotired_final_zbs
         abba = sotired_final_zbs['Скважина №'].tolist()
         # abba
+        # if sotired_final_zbs.shape[0] != 0:
 
         sotired_final_zbs['Длина ГС, м'] = sotired_final_zbs.apply(
             lambda x:
