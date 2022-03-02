@@ -572,20 +572,22 @@ class Inpxlsx():
         # замена
         alli = copy.deepcopy(sotired_final)
         alli = alli[alli['level_0'].isin(all_wells)].reset_index(drop=True)
-        alli = alli.drop(alli[alli['Тип ГТМ'] == 'ВНС'].index).reset_index(drop=True)
-        alli = alli.groupby('Скважина №').agg(
+        if alli.shape[0] != 0:
+
+            alli = alli.drop(alli[alli['Тип ГТМ'] == 'ВНС'].index).reset_index(drop=True)
+            alli = alli.groupby('Скважина №').agg(
             {'level_0': lambda x:
             x.tolist()[0]}
-        )
-        definetely_stay = alli['level_0'].tolist()
-        array_3 = list(all_wells)
-        for x in definetely_stay:
-            try:
-                array_3.remove(x)
-            except ValueError:
-                pass
+            )
+            definetely_stay = alli['level_0'].tolist()
+            array_3 = list(all_wells)
+            for x in definetely_stay:
+                try:
+                    array_3.remove(x)
+                except ValueError:
+                    pass
         # вот досюда
-        sotired_final = sotired_final[~sotired_final['level_0'].isin(array_3)].reset_index(drop=True)
+            sotired_final = sotired_final[~sotired_final['level_0'].isin(array_3)].reset_index(drop=True)
         sotired_final = sotired_final.drop(['level_0'], axis=1)
         # проверяем ЗБС
         grp_4 = copy.deepcopy(grp_gtm)
@@ -631,6 +633,16 @@ class Inpxlsx():
             + ('_Л' if x['Длина ГС, м'] == 0 else ''),
             axis=1
             )
+            sotired_final_zbs['L'] = sotired_final_zbs.apply(
+                lambda x:
+                1 if 'Л' in str(x['Скважина №'])
+                else 0, axis=1)
+            sotired_final_zbs['ГС/ННС'] = sotired_final_zbs.apply(
+                lambda x:
+                str(x['ГС/ННС']).replace('ГС', 'ННС') if x['L'] == 1 else str(x['ГС/ННС']),
+                axis=1
+            )
+            sotired_final_zbs = sotired_final_zbs.drop(['L'], axis=1)
             sotired_final_zbs = sotired_final_zbs.drop(['Начало.1'], axis=1)
             sotired_final = sotired_final[~sotired_final['Скважина №'].isin(abba)].reset_index(drop=True)
         sotired_final = pd.concat([sotired_final, sotired_final_zbs])
