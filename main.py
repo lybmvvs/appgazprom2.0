@@ -3,6 +3,7 @@ import copy
 import pandas as pd
 import statistics
 import datetime
+import locale
 from PyQt5 import QtWidgets
 from forming_GRP_new import Ui_GRP
 
