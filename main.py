@@ -853,6 +853,19 @@ class Inpxlsx():
             lambda x:
             1 if 'ФРАК' in str(x['Скважина №'])
             else x['Число стадий ГРП'], axis=1)
+        we_here['Число стадий ГРП'] = we_here.apply(
+            lambda x:
+            0 if 'ГС' == str(x['ГС/ННС'])
+            else x['Число стадий ГРП'], axis=1)
+        we_here['Число стадий ГРП'] = we_here.apply(
+            lambda x:
+            0 if 'ННС' == str(x['ГС/ННС'])
+            else x['Число стадий ГРП'], axis=1)
+        we_here['Скважина №'] = we_here.apply(
+            lambda x:
+            str(x['Скважина №']).replace('_Л', 'Л') if '_Л' in str(x['Скважина №']) else str(x['Скважина №']),
+            axis=1
+        )
 
 
 
