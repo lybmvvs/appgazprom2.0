@@ -688,5 +688,3 @@ class Inpxlsx():
 
 
 sys.exit(app.exec_())
-
-
