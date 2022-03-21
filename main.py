@@ -421,6 +421,23 @@ class Inpxlsx():
             if i not in arura:
                 arura.append(i)
         if sotired_final_zbs.shape[0] != 0:
+            #sotired_final_zbs['Число стадий ГРП'] = sotired_final_zbs.apply(
+            #    lambda x:
+            #    1 if x['Дата ВНР после'] < x['Начало.1'] else x['Число стадий ГРП'],
+            #    axis=1
+            #)
+            #sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
+            #    lambda x:
+            #    str(x['Скважина №'])
+            #    + ('_Л' if x['Дата ВНР после'] < x['Начало.1'] else ''),
+            #    axis=1
+            #)
+            #21.03.22
+            sotired_final_zbs['Длина ГС, м'] = sotired_final_zbs.apply(
+                lambda x:
+                0 if x['Дата ВНР после'] < x['Начало.1'] else x['Длина ГС, м'],
+                axis=1
+            )
             sotired_final_zbs['Число стадий ГРП'] = sotired_final_zbs.apply(
                 lambda x:
                 1 if x['Дата ВНР после'] < x['Начало.1'] else x['Число стадий ГРП'],
@@ -429,9 +446,10 @@ class Inpxlsx():
             sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
                 lambda x:
                 str(x['Скважина №'])
-                + ('_Л' if x['Дата ВНР после'] < x['Начало.1'] else ''),
+                + ('_Л' if x['Длина ГС, м'] == 0 else ''),
                 axis=1
             )
+            #21.03.22
             sotired_final_zbs = sotired_final_zbs.drop(['Начало.1'], axis=1)
             sotired_final = sotired[~sotired['Скважина №'].isin(arura)].reset_index(drop=True)
         sotired_final1 = pd.concat([sotired_final, sotired_final_zbs])
@@ -653,6 +671,18 @@ class Inpxlsx():
             str(x['Скважина №']).replace('_Л', 'Л') if '_Л' in str(x['Скважина №']) else str(x['Скважина №']),
             axis=1
         )
+        #21.03.22
+        we_here['ГС/ННС'] = we_here.apply(
+            lambda x:
+            str(x['ГС/ННС']).replace('ГС', 'ННС')
+            if 0 == x['Длина ГС, м']
+            else x['ГС/ННС'], axis=1)
+        we_here['Число стадий ГРП'] = we_here.apply(
+            lambda x:
+            2 if 'ГС' in x['ГС/ННС'] and 'ГРП' in x['ГС/ННС'] and x['Число стадий ГРП']==1
+            else x['Число стадий ГРП'], axis=1)
+
+        # 21.03.22
 
 
 
