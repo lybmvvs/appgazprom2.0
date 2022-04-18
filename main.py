@@ -557,103 +557,103 @@ class Inpxlsx():
             lambda x:
             1 if x['Длина ГС, м'] == 0 and 'ГРП' in x['ГС/ННС']
             else x['Число стадий ГРП'], axis=1)
-        if sotired_final_zbs.shape[0] != 0:
 
 
 
-            sotired_final_zbs['index'] = sotired_final_zbs.index
-            sotired_final_zbs.reset_index(drop=True)
-            sotired_final_zbs.reset_index(inplace=True)
-            step1 = sotired_final_zbs.drop(
-            sotired_final_zbs[(sotired_final_zbs['ГС/ННС'] == 'ГС') | (sotired_final_zbs['ГС/ННС'] == 'ННС')].index)
-            step1 = step1.groupby(by=['Скважина №']).agg(
+
+        sotired_final_zbs['index'] = sotired_final_zbs.index
+        sotired_final_zbs.reset_index(drop=True)
+        sotired_final_zbs.reset_index(inplace=True)
+        step1 = sotired_final_zbs.drop(
+        sotired_final_zbs[(sotired_final_zbs['ГС/ННС'] == 'ГС') | (sotired_final_zbs['ГС/ННС'] == 'ННС')].index)
+        step1 = step1.groupby(by=['Скважина №']).agg(
             {'index': lambda x:
             x.tolist()}
             )
-            step1.reset_index(inplace=True)
-            step1['Length'] = step1.apply(
+        step1.reset_index(inplace=True)
+        step1['Length'] = step1.apply(
             lambda x: len(x['index'])
             , axis=1)
-            step1 = step1.drop(step1[step1['Length'] < 1].index)
-            gang11 = []
-            gang21 = []
-            gang31 = []
-            gang41 = []
-            gang51 = []
-            gang61 = []
-            gang71 = []
-            gang81 = []
-            gang91 = []
-            gang101 = []
-            for i in step1['index']:
-                if len(i) >= 1:
-                    gang11.append(i[0])
-                if len(i) >= 2:
-                    gang21.append(i[1])
-                if len(i) >= 3:
-                    gang31.append(i[2])
-                if len(i) >= 4:
-                    gang41.append(i[3])
-                if len(i) >= 5:
-                    gang51.append(i[4])
-                if len(i) >= 6:
-                    gang61.append(i[5])
-                if len(i) >= 7:
-                    gang71.append(i[6])
-                if len(i) >= 8:
-                    gang81.append(i[7])
-                if len(i) >= 9:
-                    gang91.append(i[8])
-                if len(i) >= 10:
-                    gang101.append(i[9])
-                else:
-                    pass
-            sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
+        step1 = step1.drop(step1[step1['Length'] < 1].index)
+        gang11 = []
+        gang21 = []
+        gang31 = []
+        gang41 = []
+        gang51 = []
+        gang61 = []
+        gang71 = []
+        gang81 = []
+        gang91 = []
+        gang101 = []
+        for i in step1['index']:
+            if len(i) >= 1:
+                gang11.append(i[0])
+            if len(i) >= 2:
+                gang21.append(i[1])
+            if len(i) >= 3:
+                gang31.append(i[2])
+            if len(i) >= 4:
+                gang41.append(i[3])
+            if len(i) >= 5:
+                gang51.append(i[4])
+            if len(i) >= 6:
+                gang61.append(i[5])
+            if len(i) >= 7:
+                gang71.append(i[6])
+            if len(i) >= 8:
+                gang81.append(i[7])
+            if len(i) >= 9:
+                gang91.append(i[8])
+            if len(i) >= 10:
+                gang101.append(i[9])
+            else:
+                pass
+        sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
             lambda x:
             x['Скважина №'] + '_ГРП' if x['index'] in gang11
             else x['Скважина №'], axis=1)
-            sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
+        sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
             lambda x:
             x['Скважина №'] + '_ФРАК_1' if x['index'] in gang21
             else x['Скважина №'], axis=1)
-            sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
+        sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
             lambda x:
             x['Скважина №'] + '_ФРАК_2' if x['index'] in gang31
             else x['Скважина №'], axis=1)
-            sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
+        sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
             lambda x:
             x['Скважина №'] + '_ФРАК_3' if x['index'] in gang41
             else x['Скважина №'], axis=1)
-            sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
+        sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
             lambda x:
             x['Скважина №'] + '_ФРАК_4' if x['index'] in gang51
             else x['Скважина №'], axis=1)
-            sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
+        sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
             lambda x:
             x['Скважина №'] + '_ФРАК_5' if x['index'] in gang61
             else x['Скважина №'], axis=1)
-            sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
+        sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
             lambda x:
             x['Скважина №'] + '_ФРАК_6' if x['index'] in gang71
             else x['Скважина №'], axis=1)
-            sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
+        sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
             lambda x:
             x['Скважина №'] + '_ФРАК_7' if x['index'] in gang81
             else x['Скважина №'], axis=1)
-            sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
+        sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
             lambda x:
             x['Скважина №'] + '_ФРАК_8' if x['index'] in gang91
             else x['Скважина №'], axis=1)
-            sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
+        sotired_final_zbs['Скважина №'] = sotired_final_zbs.apply(
             lambda x:
             x['Скважина №'] + '_ФРАК_9' if x['index'] in gang101
             else x['Скважина №'], axis=1)
-            sotired_final_zbs = sotired_final_zbs.drop(['index'], axis=1)
+        sotired_final_zbs = sotired_final_zbs.drop(['index'], axis=1)
 
-            sotired_final_zbs.reset_index(drop=True)
-            sotired_final_zbs.reset_index(inplace=True)
-            sotired_final_zbs = sotired_final_zbs.drop(['index'], axis=1)
-            sotired_final_zbs['Число стадий ГРП'] = sotired_final_zbs.apply(
+        sotired_final_zbs.reset_index(drop=True)
+        sotired_final_zbs.reset_index(inplace=True)
+        sotired_final_zbs = sotired_final_zbs.drop(['index'], axis=1)
+        sotired_final_zbs['Число стадий ГРП'] = sotired_final_zbs.apply(
             lambda x:
             1 if x['Длина ГС, м'] == 0 and 'ГРП' in x['ГС/ННС']
             else x['Число стадий ГРП'], axis=1)
@@ -707,7 +707,7 @@ class Inpxlsx():
         global we_here
         we_here.reset_index(drop=True)
         we_here.reset_index(inplace=True)
-        #we_here = we_here.drop(['level_0'], axis=1)
+        we_here = we_here.drop(['level_0'], axis=1)
         we_here = we_here.drop(['index'], axis=1)
         we_here.to_excel('GRP_new.xlsx')
 
